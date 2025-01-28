@@ -47,7 +47,7 @@ You will see this in the R console:
 
 `Press 'Esc' key to finish here, or press any other key to continue with mapping variables`
 
-Pressing any key will move you to the mapping phase. Demo mode (run by `metadata_map()`) only processes the fist 20 data elements (variables) in the selected table.
+Pressing any key will move you to the mapping phase. Demo mode (run by `metadata_map()`) only processes the first 20 data elements (variables) in the selected table.
 
 ```         
 Enter your initials: rs

@@ -86,7 +86,7 @@ Currently, the recommended way of retrieving these metadata files is to download
 
 ## Using a custom domain list input (recommended)
 
-You can replace the default demo domains with research-specific domains. Remember any domain file input will have Codes 0,1,2 and 3 automatically appended to the start of the domain list, so do not include these in your domain list. 
+You can replace the default demo domains with research-specific domains. Remember any domain file input will have Codes 0, 1, 2 and 3 automatically appended to the start of the domain list, so do not include these in your domain list. 
 
 ## Using a custom lookup table input (advanced)
 
