@@ -81,46 +81,28 @@ map_compare <- function(session_dir,
     stop("Cannot locate all four input files.")
   }
 
-  # Read csv files
+  ## Check if domain_file exists
+  if (!file.exists(domain_file))  {
+    stop("Cannot locate domain_file.")
+  }
+
+  ## Check if metadata_file exists
+  if (!file.exists(metadata_file))  {
+    stop("Cannot locate metadata_file.")
+  }
+
+  # Read files
   csv_1a <- read.csv(csv_1a_path)
   csv_2a <- read.csv(csv_2a_path)
   csv_1b <- read.csv(csv_1b_path)
   csv_2b <- read.csv(csv_2b_path)
 
-  # Verify the metadata file name pattern and that it is a .csv file
-  metadata_base <- basename(metadata_file)
-  if (!grepl("^[0-9]+_.*_Metadata\\.csv$", metadata_base) ||
-        tools::file_ext(metadata_file) != "csv") {
-    stop(paste("Metadata file name must be a .csv file in the format",
-               "ID_Name_Metadata.csv where ID is an integer"))
-  } else {
-    if (!file.exists(metadata_file)) {
-      stop("Metadata filename is the correct format but it does not exist!")
-    }
-  }
-
-  # Check if metadata column names match what is expected
   metadata <- read.csv(metadata_file)
-  column_names <- colnames(metadata)
-  expected_column_names <- c("Section", "Column.name", "Data.type",
-                             "Column.description", "Sensitive")
-  if (!all(column_names == expected_column_names)) {
-    stop("Metadata file does not have expected column names")
-  }
-
+  metadata_base <- basename(metadata_file)
   metadata_base_0suffix <- sub("_Metadata.csv$", "", metadata_base)
   metadata_desc <- gsub(" ", "", metadata_base_0suffix)
 
-  # Check if the domain_file is a csv and has one column
-  if (file.exists(domain_file) && tools::file_ext(domain_file) == "csv") {
-    domains <- read.csv(domain_file, header = FALSE)
-    if (ncol(domains) == 1) {
-    } else {
-      stop("The domain_file should only have one column.")
-    }
-  } else {
-    stop("This domain_file does not exist or is not in csv format.")
-  }
+  domains <- read.csv(domain_file)
 
   # CHECK IF A VALID COMPARISON BETWEEN SESSIONS IS POSSIBLE ----
 
@@ -152,7 +134,7 @@ map_compare <- function(session_dir,
     input_1 = nrow(csv_1b),
     input_2 = nrow(csv_2b),
     severity = "danger",
-    severity_text = "Different number of variavles!"
+    severity_text = "Different number of variables!"
   )
 
   ##  Check if sessions can be compared (warnings for user to check):
@@ -166,8 +148,10 @@ map_compare <- function(session_dir,
 
   # DISPLAY TO USER ----
 
-  ## Use 'ref_plot.R' to plot domains for the user's ref (save df for later use)
-  df_plots <- ref_plot(domains)
+  ## Extract domains and plot for user's reference
+  domain_table <- tableGrob(domains, rows = NULL)
+  grid.arrange(domain_table, nrow = 1, ncol = 1)
+  n_codes <- nrow(domains)
 
   # EXTRACT TABLE INFO FROM METADATA ----
   table_name <- csv_1a$table[1]
@@ -182,8 +166,7 @@ map_compare <- function(session_dir,
 
   # FIND MISMATCHES AND ASK FOR CONSENSUS DECISION ----
   for (variable in seq_len(nrow(ses_join))) {
-    consensus <- consensus_on_mismatch(ses_join, table_df, variable,
-                                       max(df_plots$code$code))
+    consensus <- consensus_on_mismatch(ses_join, table_df, variable, n_codes)
     ses_join$domain_code_join[variable] <- consensus$domain_code_join
     ses_join$note_join[variable] <- consensus$note_join
   } # end of loop for variable

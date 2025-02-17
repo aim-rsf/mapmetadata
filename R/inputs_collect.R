@@ -14,6 +14,7 @@
 #' @importFrom cli cli_alert_info
 #' @importFrom utils read.csv
 #' @importFrom tools file_path_sans_ext
+#' @importFrom dplyr left_join
 #' @keywords internal
 #' @dev generate help files for unexported objects, for developers
 
@@ -44,11 +45,11 @@ data_load <- function(metadata_file, domain_file, look_up_file, quiet = FALSE) {
     # Verify the metadata file name pattern and that it is a .csv file
     if (!grepl("^[0-9]+_.*_Metadata\\.csv$", metadata_base) ||
           tools::file_ext(metadata_file) != "csv") {
-      stop(paste("Metadata file name must be a .csv file in the format",
+      stop(paste("metadata_file name must be a .csv file in the format",
                  "ID_Name_Metadata.csv where ID is an integer"))
     } else {
       if (!file.exists(metadata_file)) {
-        stop("Metadata filename is the correct format but it does not exist!")
+        stop("metadata_file is the correct filename but it does not exist!")
       }
     }
 
@@ -57,24 +58,33 @@ data_load <- function(metadata_file, domain_file, look_up_file, quiet = FALSE) {
     column_names <- colnames(metadata)
     expected_column_names <- c("Section", "Column.name", "Data.type",
                                "Column.description", "Sensitive")
-    if (!all(column_names == expected_column_names)) {
-      stop("Metadata file does not have expected column names")
+    if (!identical(sort(column_names), sort(expected_column_names))) {
+      stop("metadata_file does not have expected column names")
     }
 
     metadata_base_0suffix <- sub("_Metadata.csv$", "", metadata_base)
     metadata_desc <- gsub(" ", "", metadata_base_0suffix)
 
-    # Check if the domain_file is a csv and has one column
+    # Check if the domain_file is a csv and has two columns
     if (file.exists(domain_file) && tools::file_ext(domain_file) == "csv") {
-      domains <- read.csv(domain_file, header = FALSE)
-      if (ncol(domains) == 1) {
+      domains <- read.csv(domain_file)
+      column_names <- colnames(domains)
+      expected_column_names <- c("Domain_Code", "Domain_Name")
+      if (identical(sort(column_names), sort(expected_column_names))) {
         domain_list_desc <- file_path_sans_ext(basename(domain_file))
       } else {
-        stop("The domain_file should only have one column.")
+        stop("domain_file does not have the expected column names")
       }
     } else {
-      stop("This domain_file does not exist or is not in csv format.")
+      stop("domain_file does not exist or is not in csv format.")
     }
+  }
+
+  # Check the domain_file 'Code' column is correct
+  code_expected <- as.integer(seq(1, nrow(domains), 1))
+  if (!identical(code_expected, domains$Domain_Code)) {
+    stop(paste("'Code' column in domain_file is not as expected.\n",
+               "Expected 1:", nrow(domains)))
   }
 
   # Collect look up table
@@ -86,15 +96,25 @@ data_load <- function(metadata_file, domain_file, look_up_file, quiet = FALSE) {
   } else {
     if (!quiet) {
       cli_alert_info("Using look up file inputted by user")
-      if (file.exists(look_up_file) && tools::file_ext(look_up_file) == "csv") {
-        lookup <- read.csv(look_up_file)
-        expected_column_names <- c("variable", "domain_label", "domain_code")
-        if (!all(colnames(lookup) == expected_column_names)) {
-          stop("Look_up file does not have expected column names")
-        }
-      } else {
-        stop("This look_up_file does not exist or is not in csv format.")
+    }
+    # Check look_up file given by user
+    if (file.exists(look_up_file) && tools::file_ext(look_up_file) == "csv") {
+      lookup <- read.csv(look_up_file)
+      expected_column_names <- c("Variable", "Domain_Name")
+      if (!all(colnames(lookup) == expected_column_names)) {
+        stop("look_up file does not have expected column names")
       }
+      # Add Domain_Code column into lookup table
+      lookup <- lookup %>% left_join(domains, by = "Domain_Name")
+      # Check for look_up rows not covered by domain_list
+      no_match <- lookup[!lookup$Domain_Name %in% domains$Domain_Name, ]
+      if (nrow(no_match) != 0) {
+        warning(paste("There are domain names in the look_up_file that are not",
+                      "included in the domain_file. If this is not expected,",
+                      "check for mistakes."))
+      }
+    } else {
+      stop("look_up_file does not exist or is not in csv format.")
     }
   }
 

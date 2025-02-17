@@ -54,8 +54,8 @@
 #' metadata_map \cr \cr
 #' This data was created with these two steps:
 #' \enumerate{
-#'  \item \code{domain_list <-
-#'  read.csv('inst/inputs/domain_list_demo.csv',header=FALSE)}
+#'  \item \code{domain_list <- read.csv(system.file('inputs',
+#'  'domain_list_demo.csv', package = 'mapmetadata'))}
 #'  \item \code{usethis::use_data(domain_list)}
 #' }
 #' @docType data
@@ -64,7 +64,7 @@
 #'
 #' @keywords internal
 #'
-#' @format A data frame with 8 rows and 1 column
+#' @format A data frame with 8 rows and 2 columns
 #'
 #' @source The csv was manually created
 "domain_list"
@@ -78,7 +78,8 @@
 #'   \item Navigate to the dataset of interest, select 'Download data' and
 #'   download the Structural Metadata file
 #'   \item Shorten name of downloaded file e.g. 360_NCCHD_Metadata.csv
-#'   \item \code{metadata <- read.csv("inst/inputs/360_NCCHD_Metadata.csv")}
+#'   \item \code{metadata <- read.csv(system.file('inputs',
+#'   '360_NCCHD_Metadata.csv', package = 'mapmetadata'))}
 #'   \item \code{usethis::use_data(metadata)}
 #' }
 #'
@@ -101,7 +102,8 @@
 #' domain code rather than asking the user to categorise.\cr\cr
 #' This data was created with these two steps:
 #' \enumerate{
-#'  \item \code{look_up <- read.csv('inst/inputs/look_up.csv')}
+#'  \item \code{look_up <- read.csv(system.file('inputs',
+#'  'look_up.csv',package = 'mapmetadata'))}
 #'  \item \code{usethis::use_data(look_up)}
 #' }
 #' @docType data
@@ -110,7 +112,7 @@
 #'
 #' @keywords internal
 #'
-#' @format A data frame with a variable number of rows and 3 columns
+#' @format A data frame with a variable number of rows and 2 columns
 #'
 #' @source The csv was manually created
 "look_up"

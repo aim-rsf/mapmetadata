@@ -21,7 +21,8 @@ This data was created with these steps:
 \item Navigate to the dataset of interest, select 'Download data' and
 download the Structural Metadata file
 \item Shorten name of downloaded file e.g. 360_NCCHD_Metadata.csv
-\item \code{metadata <- read.csv("inst/inputs/360_NCCHD_Metadata.csv")}
+\item \code{metadata <- read.csv(system.file('inputs',
+  '360_NCCHD_Metadata.csv', package = 'mapmetadata'))}
 \item \code{usethis::use_data(metadata)}
 }
 }

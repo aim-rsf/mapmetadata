@@ -1,18 +1,19 @@
 output_df <- get("output_df")
-code <- data.frame(code = 0:2)
-df_plots <- list(code = code, "")
 
 test_that("user_categorisation_loop handles auto categorisation", {
   # Mock data
   table_df <- data.frame(Column.name = c("Variable1", "Variable2"),
                          Column.description = c("Desc1", "Desc2"),
                          Data.type = c("Type1", "Type2"))
-  lookup <- data.frame(variable = c("Variable1", "Variable2"),
-                       domain_code = c(1, 2))
+  lookup_joined <- data.frame(Variable = c("Variable1", "Variable2"),
+                              Domain_Name = c("METADATA", "ID"),
+                              Domain_Code = c(2, 3))
+
+  n_codes <- 2
 
   # Call the function
   result <- user_categorisation_loop(1, 2, table_df, FALSE, data.frame(),
-                                     lookup, df_plots, output_df)
+                                     lookup_joined, n_codes, output_df)
 
   # Check the result
   expect_equal(nrow(result), 2)
@@ -28,12 +29,14 @@ test_that("user_categorisation_loop handles copying from previous table", {
   df_prev <- data.frame(variable = c("Variable1", "Variable2"),
                         domain_code = c(1, 2), table = c("PrevTable1",
                                                          "PrevTable2"))
-  lookup <- data.frame(variable = c("Variable3", "Variable4"),
-                       domain_code = c(3, 4))
+
+  lookup_joined <- data.frame(Variable = c("Variable3", "Variable4"),
+                              Domain_Name = c("METADATA", "ID"),
+                              Domain_Code = c(2, 3))
 
   # Call the function
-  result <- user_categorisation_loop(1, 2, table_df, TRUE, df_prev, lookup,
-                                     df_plots, output_df)
+  result <- user_categorisation_loop(1, 2, table_df, TRUE, df_prev,
+                                     lookup_joined, df_plots, output_df)
 
   # Check the result
   expect_equal(nrow(result), 2)
@@ -46,8 +49,10 @@ test_that("user_categorisation_loop handles user categorisation", {
   table_df <- data.frame(Column.name = c("Variable1", "Variable2"),
                          Column.description = c("Desc1", "Desc2"),
                          Data.type = c("Type1", "Type2"))
-  lookup <- data.frame(variable = c("Variable3", "Variable4"),
-                       domain_code = c(3, 4))
+
+  lookup_joined <- data.frame(Variable = c("Variable3", "Variable4"),
+                              Domain_Name = c("METADATA", "ID"),
+                              Domain_Code = c(2, 3))
 
   # Mock the user_categorisation function
   local_mocked_bindings(user_categorisation = function(var = NULL,
@@ -59,7 +64,7 @@ test_that("user_categorisation_loop handles user categorisation", {
 
   # Call the function
   result <- user_categorisation_loop(1, 2, table_df, FALSE, data.frame(),
-                                     lookup, df_plots, output_df)
+                                     lookup_joined, df_plots, output_df)
 
   # Check the result
   expect_equal(nrow(result), 2)

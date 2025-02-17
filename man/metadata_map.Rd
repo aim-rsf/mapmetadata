@@ -20,8 +20,8 @@ metadata_map(
 (in the form of ID_Dataset_Metadata.csv). Run '?mapmetadata::metadata' to
 see how the metadata_file for the demo was created.}
 
-\item{domain_file}{This should be a csv file created by the user, with each
-domain on a separate line, no header. Run '?mapmetadata::domain_list' to
+\item{domain_file}{This should be a csv file created by the user, with two
+columns (Domain_Code and Domain_Name). Run '?mapmetadata::domain_list' to
 see how the domain_file for the demo was created.}
 
 \item{look_up_file}{The lookup file makes auto-categorisations intended for
@@ -50,8 +50,8 @@ Default is 5.
 and cli_alert_success messages.}
 }
 \value{
-The function will return two csv files: 'OUTPUT_' which contains the
-mappings and 'LOG_' which contains details about the dataset and session.
+A html plot summarising the dataset. Various csv and png outputs to
+summarise the user's mapping session for a specific table in the dataset.
 }
 \description{
 This function will read in the metadata file for a chosen dataset and create
@@ -65,7 +65,7 @@ auto-categorisations will be made by the function for commonly occurring
 variables, and categorisations for the same variable can be copied from one
 table to another. \cr \cr
 Example inputs are provided within the package data, for the user to run this
-function in a demo mode.
+function in a demo mode. Refer to the package website for more guidance.
 }
 \examples{
 # Demo run requires no function inputs but requires user interaction.

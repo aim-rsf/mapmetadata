@@ -6,4 +6,5 @@ utils::globalVariables(c("Column.description",
                          "no_count",
                          "note",
                          "total_variables",
-                         "variable"))
+                         "variable",
+                         "Variable"))

@@ -112,52 +112,7 @@ test_that("map_compare errors when demo_session1_base is not valid", {
                "Cannot locate all four input files.")
 })
 
-test_that("map_compare errors when metadata_file is incorrect format", {
-
-  # Setup
-  temp_dir <- withr::local_tempdir()
-
-  demo_session_dir <- system.file("outputs", package = "mapmetadata")
-  demo_session1_base <- "360_NCCHD_CHILD_2025-02-14-18-14-01"
-  demo_session2_base <- "360_NCCHD_CHILD_2025-02-14-18-17-47"
-  demo_metadata_file <- system.file("inputs", "360_NCCHD_Metadata.csv",
-                                    package = "mapmetadata")
-  demo_domain_file <- system.file("inputs", "domain_list_demo.csv",
-                                  package = "mapmetadata")
-
-  expect_error(map_compare(session_dir = demo_session_dir,
-                           session1_base = demo_session1_base,
-                           session2_base = demo_session2_base,
-                           metadata_file = "Metadata_360NCCHD.csv",
-                           domain_file = demo_domain_file,
-                           output_dir = temp_dir),
-               paste("Metadata file name must be a .csv file in the format",
-                     "ID_Name_Metadata.csv where ID is an integer"))
-})
-
-test_that("map_compare errors when metadata_file does not exist", {
-
-  # Setup
-  temp_dir <- withr::local_tempdir()
-
-  demo_session_dir <- system.file("outputs", package = "mapmetadata")
-  demo_session1_base <- "360_NCCHD_CHILD_2025-02-14-18-14-01"
-  demo_session2_base <- "360_NCCHD_CHILD_2025-02-14-18-17-47"
-  demo_metadata_file <- system.file("inputs", "360_NCCHD_Metadata.csv",
-                                    package = "mapmetadata")
-  demo_domain_file <- system.file("inputs", "domain_list_demo.csv",
-                                  package = "mapmetadata")
-
-  expect_error(map_compare(session_dir = demo_session_dir,
-                           session1_base = demo_session1_base,
-                           session2_base = demo_session2_base,
-                           metadata_file = "360_NCCHD_Metadata.csv",
-                           domain_file = demo_domain_file,
-                           output_dir = temp_dir),
-               "Metadata filename is the correct format but it does not exist!")
-})
-
-test_that("map_compare errors when domain_file does not exist", {
+test_that("map_compare errors when domain_file is not valid", {
 
   # Setup
   temp_dir <- withr::local_tempdir()
@@ -174,7 +129,29 @@ test_that("map_compare errors when domain_file does not exist", {
                            session1_base = demo_session1_base,
                            session2_base = demo_session2_base,
                            metadata_file = demo_metadata_file,
-                           domain_file = "domain_list_demo.csv",
+                           domain_file = "not_valid",
                            output_dir = temp_dir),
-               "This domain_file does not exist or is not in csv format.")
+               "Cannot locate domain_file.")
+})
+
+test_that("map_compare errors when metadata_file is not valid", {
+
+  # Setup
+  temp_dir <- withr::local_tempdir()
+
+  demo_session_dir <- system.file("outputs", package = "mapmetadata")
+  demo_session1_base <- "360_NCCHD_CHILD_2025-02-14-18-14-01"
+  demo_session2_base <- "360_NCCHD_CHILD_2025-02-14-18-17-47"
+  demo_metadata_file <- system.file("inputs", "360_NCCHD_Metadata.csv",
+                                    package = "mapmetadata")
+  demo_domain_file <- system.file("inputs", "domain_list_demo.csv",
+                                  package = "mapmetadata")
+
+  expect_error(map_compare(session_dir = demo_session_dir,
+                           session1_base = demo_session1_base,
+                           session2_base = demo_session2_base,
+                           metadata_file = "not_valid",
+                           domain_file = demo_domain_file,
+                           output_dir = temp_dir),
+               "Cannot locate metadata_file.")
 })

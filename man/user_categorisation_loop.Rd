@@ -11,7 +11,7 @@ user_categorisation_loop(
   df_prev_exist,
   df_prev,
   lookup,
-  df_plots,
+  n_codes,
   output_df,
   quiet = FALSE
 )
@@ -29,7 +29,7 @@ user_categorisation_loop(
 
 \item{lookup}{The lookup table to enable auto categorisations}
 
-\item{df_plots}{Output from ref_plot, to indicate mac domain code allowed}
+\item{n_codes}{Number of domain codes permissible}
 
 \item{output_df}{Empty output dataframe, to fill}
 

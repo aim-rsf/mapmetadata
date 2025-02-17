@@ -95,19 +95,20 @@ Run `data("domain_list")` to load the demo domain list into your R environment (
 
 ```r
 data("domain_list")
-print(domain_list)
-1  NO MATCH / UNSURE
-2           METADATA
-3                 ID
-4       DEMOGRAPHICS
-5 Socioeconomic info
-6      Location info
-7     Education info
-8        Health info
+print(domain_list, row.names = FALSE)
+Domain_Code        Domain_Name
+           1  NO MATCH / UNSURE
+           2           METADATA
+           3                 ID
+           4       DEMOGRAPHICS
+           5 Socioeconomic info
+           6      Location info
+           7     Education info
+           8        Health info
 ```
 Change this csv domain file to be more specific to your research domains (sometimes called latent variables or concepts) as these are broad and generic categories for demo purposes. 
 
-It is strongly recommended to keep the first four domains (NO MATCH / UNSURE, METADATA, ID, DEMOGRAPHICS). If you change them, you also have to change the lookup table.
+It is recommended to keep the first four domains (NO MATCH / UNSURE, METADATA, ID, DEMOGRAPHICS) as they map to the demo lookup table, but this is not essential.
 
 # Using a custom lookup table input (advanced) 
 
@@ -115,39 +116,45 @@ Run `data("look_up")` to load the demo look up table into your R environment (yo
 
 ```r
 data("look_up")
-print(look_up)
-                      variable      domain_label domain_code
-1                         NA   No Match / Unsure           1
-2                AVAIL_FROM_DT          Metadata           2
-3                        ALF_E                ID           3
-4                 MOTHER_ALF_E                ID           3
-5                  CHILD_ALF_E                ID           3
-6                         RALF                ID           3
-7                   ALF_STS_CD                ID           3
-8            MOTHER_ALF_STS_CD                ID           3
-9             CHILD_ALF_STS_CD                ID           3
-10                ALF_MTCH_PCT                ID           3
-11         MOTHER_ALF_MTCH_PCT                ID           3
-12          CHILD_ALF_MTCH_PCT                ID           3
-13     SERVICE_USER_LOCAL_ID_E                ID           3
-14 MAT_SERVICE_USER_LOCAL_ID_E                ID           3
-15                 CLIENT_ID_E                ID           3
-16                         AGE      Demographics           4
-17                     MAT_AGE      Demographics           4
-18              MAT_AGE_AT_ASS      Demographics           4
-19                 CONTACT_AGE      Demographics           4
-20                         WOB      Demographics           4
-21                     MAT_WOB      Demographics           4
-22                         SEX      Demographics           4
-23         SERVICE_USER_SEX_CD      Demographics           4
-24             NENONATE_SEX_CD      Demographics           4
-25                      GENDER      Demographics           4
-26                        GNDR      Demographics           4
-27                     GNDR_CD      Demographics           4
+print(look_up, row.names = FALSE)
+                    Variable       Domain_Name
+                        <NA> NO MATCH / UNSURE
+               AVAIL_FROM_DT          METADATA
+                       ALF_E                ID
+                MOTHER_ALF_E                ID
+                 CHILD_ALF_E                ID
+                        RALF                ID
+                  ALF_STS_CD                ID
+           MOTHER_ALF_STS_CD                ID
+            CHILD_ALF_STS_CD                ID
+                ALF_MTCH_PCT                ID
+         MOTHER_ALF_MTCH_PCT                ID
+          CHILD_ALF_MTCH_PCT                ID
+     SERVICE_USER_LOCAL_ID_E                ID
+ MAT_SERVICE_USER_LOCAL_ID_E                ID
+                 CLIENT_ID_E                ID
+                         AGE      DEMOGRAPHICS
+                     MAT_AGE      DEMOGRAPHICS
+              MAT_AGE_AT_ASS      DEMOGRAPHICS
+                 CONTACT_AGE      DEMOGRAPHICS
+                         WOB      DEMOGRAPHICS
+                     MAT_WOB      DEMOGRAPHICS
+                         SEX      DEMOGRAPHICS
+         SERVICE_USER_SEX_CD      DEMOGRAPHICS
+             NENONATE_SEX_CD      DEMOGRAPHICS
+                      GENDER      DEMOGRAPHICS
+                        GNDR      DEMOGRAPHICS
+                     GNDR_CD      DEMOGRAPHICS
 ```
 
-The default lookup table (printed above) governs the automatic categorisations. If you modify the default lookup file you must ensure that all values contained in the domain_code column map to the the domain_file in the way you intend. 
-For example, we can see that the domain_file has 8 domains, which will be labelled with 1-8 by the function. If we included a '0' or '9' in the domain_code column of the lookup file, they would have nothing to map to, and the function would crash.
+The default lookup table (printed above) governs the automatic categorisations within the [metadata_map](https://github.com/aim-rsf/mapmetadata/tree/main/R/metadata_map.R) function:
+1. When a variable needs to be mapped to a domain, before asking the user it searches the lookup table
+2. If the variable name is contained within the 'Variable' column of the lookup table, this triggers the auto-categorisation 
+3. For this variable, the Domain_Name is extracted from the lookup table and the Domain_Code from the domain_list (therefore for a variable to be auto-categorised there must be a matching Domain_Name in the lookup and the domain_list files)
+
+When creating a custom lookup table, you can use this lookup table as a base and just append new rows to the bottom.
+Alternatively, if you do not want variables to be automatically mapped in the way defined by this lookup table, you can delete the rows for those specific variables. 
+Remember, you will always have the opportunity to review the variables that have been auto-categorised, and change the mapping decision as needed. 
 
 # Copying across tables
 

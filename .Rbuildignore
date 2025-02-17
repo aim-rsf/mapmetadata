@@ -22,6 +22,5 @@
 ^man/data_load\.Rd$
 ^man/output_copy\.Rd$
 ^man/empty_plot\.Rd$
-^man/ref_plot\.Rd$
 ^man/user_categorisation\.Rd$
 ^man/user_categorisation_loop\.Rd$

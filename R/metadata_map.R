@@ -15,12 +15,12 @@ select.list <- NULL
 #' variables, and categorisations for the same variable can be copied from one
 #' table to another. \cr \cr
 #' Example inputs are provided within the package data, for the user to run this
-#' function in a demo mode.
+#' function in a demo mode. Refer to the package website for more guidance.
 #' @param metadata_file This should be a csv download from HDRUK gateway
 #' (in the form of ID_Dataset_Metadata.csv). Run '?mapmetadata::metadata' to
 #' see how the metadata_file for the demo was created.
-#' @param domain_file This should be a csv file created by the user, with each
-#' domain on a separate line, no header. Run '?mapmetadata::domain_list' to
+#' @param domain_file This should be a csv file created by the user, with two
+#' columns (Domain_Code and Domain_Name). Run '?mapmetadata::domain_list' to
 #' see how the domain_file for the demo was created.
 #' @param look_up_file The lookup file makes auto-categorisations intended for
 #' variables that appear regularly in health datasets. It only works for 1:1
@@ -41,8 +41,8 @@ select.list <- NULL
 #' 'L-OUTPUT_' which gives each categorisation its own row. Default is TRUE.
 #' @param quiet Default is FALSE. Change to TRUE to quiet the cli_alert_info
 #' and cli_alert_success messages.
-#' @return The function will return two csv files: 'OUTPUT_' which contains the
-#' mappings and 'LOG_' which contains details about the dataset and session.
+#' @return A html plot summarising the dataset. Various csv and png outputs to
+#' summarise the user's mapping session for a specific table in the dataset.
 #' @examples
 #' # Demo run requires no function inputs but requires user interaction.
 #' # See package documentation to guide user inputs.
@@ -56,6 +56,8 @@ select.list <- NULL
 #' @importFrom utils packageVersion write.csv browseURL menu select.list
 #' @importFrom ggplot2 ggsave
 #' @importFrom htmlwidgets saveWidget
+#' @importFrom gridExtra tableGrob grid.arrange
+#' @importFrom graphics plot.new
 
 metadata_map <- function(
     metadata_file = NULL,
@@ -153,16 +155,10 @@ metadata_map <- function(
   log_output_df <- get("log_output_df")
   output_df <- get("output_df")
 
-  ## Use 'ref_plot.R' to plot domains for the user's ref (save df for later use)
-  df_plots <- ref_plot(data$domains)
-
-  ## Check if look_up_file and domain_file are compatible
-  mismatch <- setdiff(data$lookup$domain_code, df_plots$code$code)
-  if (length(mismatch) > 0) {
-    print(mismatch)
-    stop(paste("The look_up_file and domain_file are not compatible. These",
-               "look up codes are not listed in the domain codes:\n"))
-  }
+  ## Extract domains and plot for user's reference
+  domain_table <- tableGrob(data$domains, rows = NULL)
+  grid.arrange(domain_table, nrow = 1, ncol = 1)
+  n_codes <- nrow(data$domains)
 
   ## CHOOSE TABLE TO PROCESS
 
@@ -207,7 +203,7 @@ metadata_map <- function(
     df_prev_exist,
     df_prev,
     lookup = data$lookup,
-    df_plots,
+    n_codes,
     output_df
   )
 
@@ -239,7 +235,7 @@ metadata_map <- function(
         table_df$Column.name[v_auto],
         table_df$Column.description[v_auto],
         table_df$Data.type[v_auto],
-        max(df_plots$code$code)
+        n_codes
       )
       ##### input user responses into output
       output_df$domain_code[v_auto] <- decision_output$decision
@@ -277,7 +273,7 @@ metadata_map <- function(
           table_df$Column.name[v_not_auto],
           table_df$Column.description[v_not_auto],
           table_df$Data.type[v_not_auto],
-          max(df_plots$code$code)
+          n_codes
         )
         ##### input user responses into output
         output_df$domain_code[v_not_auto] <- decision_output$decision
@@ -320,7 +316,7 @@ metadata_map <- function(
 
   ### Create and save a summary plot
   end_plot_save <- end_plot(df = output_df, table_name,
-                            ref_table = df_plots$domain_table)
+                            ref_table = domain_table)
   ggsave(
     plot = end_plot_save,
     filename = png_path,

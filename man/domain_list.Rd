@@ -5,7 +5,7 @@
 \alias{domain_list}
 \title{Internal: List of Domains}
 \format{
-A data frame with 8 rows and 1 column
+A data frame with 8 rows and 2 columns
 }
 \source{
 The csv was manually created
@@ -18,8 +18,8 @@ Internal Dataset: A simplified list of domains, to demo the function
 metadata_map \cr \cr
 This data was created with these two steps:
 \enumerate{
-\item \code{domain_list <-
- read.csv('inst/inputs/domain_list_demo.csv',header=FALSE)}
+\item \code{domain_list <- read.csv(system.file('inputs',
+ 'domain_list_demo.csv', package = 'mapmetadata'))}
 \item \code{usethis::use_data(domain_list)}
 }
 }

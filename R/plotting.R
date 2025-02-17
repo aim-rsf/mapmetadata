@@ -32,31 +32,6 @@ empty_plot <- function(dataframe, bar_title) {
   barplot_html
 }
 
-#' Internal: ref_plot
-#'
-#' This function is called within the metadata_map function. \cr \cr
-#' It plots a reference table to guide the user in their categorisation of
-#' domains. \cr \cr
-#' This reference table is based on the user inputted domains and the default
-#' domains provided by this package.  \cr \cr
-#' @param domains The output of load_data
-#' @return A reference table that appears in the Plots tab. A list of 2
-#' containing the derivatives for this plot, used later in metadata_map'
-#' @importFrom gridExtra tableGrob grid.arrange
-#' @importFrom graphics plot.new
-#' @keywords internal
-#' @dev generate help files for unexported objects, for developers
-
-ref_plot <- function(domains) {
-  colnames(domains)[1] <- "Domain Name"
-  plot.new()
-  code <- data.frame(code = seq_len(nrow(domains)))
-  domain_table <- tableGrob(cbind(code, domains), rows = NULL)
-  grid.arrange(domain_table, nrow = 1, ncol = 1)
-
-  return(list(code = code, domain_table = domain_table))
-}
-
 #' Internal: end_plot
 #'
 #' This function is called within the metadata_map function. \cr \cr

@@ -1,8 +1,9 @@
-"NO MATCH / UNSURE"
-"METADATA"
-"ID"
-"DEMOGRAPHICS"
-"Socioeconomic info"
-"Location info"
-"Education info"
-"Health info"
+Domain_Code,Domain_Name
+1,NO MATCH / UNSURE
+2,METADATA
+3,ID
+4,DEMOGRAPHICS
+5,Socioeconomic info
+6,Location info
+7,Education info
+8,Health info

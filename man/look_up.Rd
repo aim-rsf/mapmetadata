@@ -5,7 +5,7 @@
 \alias{look_up}
 \title{Internal: Auto-categorisations}
 \format{
-A data frame with a variable number of rows and 3 columns
+A data frame with a variable number of rows and 2 columns
 }
 \source{
 The csv was manually created
@@ -20,7 +20,8 @@ If it is contained within this look-up table, it uses the auto-categorised
 domain code rather than asking the user to categorise.\cr\cr
 This data was created with these two steps:
 \enumerate{
-\item \code{look_up <- read.csv('inst/inputs/look_up.csv')}
+\item \code{look_up <- read.csv(system.file('inputs',
+ 'look_up.csv',package = 'mapmetadata'))}
 \item \code{usethis::use_data(look_up)}
 }
 }

@@ -48,9 +48,9 @@ user_categorisation <- function(var, desc, type,
       suppressWarnings(decision_int_min <- min(decision_int, na.rm = TRUE))
       if (decision_int_na == TRUE || decision_int_max > domain_code_max ||
             decision_int_min < 0) {
-        cli_alert_warning("Formatting is invalid or integer out of range.
-                          Provide one integer or a comma seperated list of
-                          integers.")
+        cli_alert_warning(paste("Formatting is invalid or integer out of",
+                                "range. Provide one integer or a comma",
+                                "seperated list of integers."))
         validated <- FALSE
       } else {
         validated <- TRUE
@@ -93,19 +93,19 @@ user_categorisation <- function(var, desc, type,
 #' @param df_prev_exist Boolean to indicate if previous dataframes exists
 #' @param df_prev Previous dataframes to copy from (or NULL)
 #' @param lookup The lookup table to enable auto categorisations
-#' @param df_plots Output from ref_plot, to indicate mac domain code allowed
+#' @param n_codes Number of domain codes permissible
 #' @param output_df Empty output dataframe, to fill
 #' @param quiet Default is FALSE. Change to TRUE to quiet the cli_alert_info
 #' and cli_alert_success messages.
 #' @return An output dataframe containing info about the table, variables
 #' and categorisations
-#' @importFrom dplyr %>% add_row
+#' @importFrom dplyr %>% add_row filter
 #' @importFrom cli cli_alert_info
 #' @keywords internal
 #' @dev generate help files for unexported objects, for developers
 
 user_categorisation_loop <- function(start_v, end_v, table_df, df_prev_exist,
-                                     df_prev, lookup, df_plots, output_df,
+                                     df_prev, lookup, n_codes, output_df,
                                      quiet = FALSE) {
   for (data_v in start_v:end_v) {
     if (!quiet) {
@@ -117,9 +117,7 @@ user_categorisation_loop <- function(start_v, end_v, table_df, df_prev_exist,
       as.character(data_v), "of",
       as.character(nrow(table_df))
     )
-    data_v_index <- which(lookup$var ==
-                            table_df$Column.name[data_v]) # improve: ignore case
-    lookup_subset <- lookup[data_v_index, ]
+
     ##### search if variable matches any variable from previous table
     if (df_prev_exist == TRUE) {
       data_v_index <- which(df_prev$var ==
@@ -128,13 +126,15 @@ user_categorisation_loop <- function(start_v, end_v, table_df, df_prev_exist,
     } else {
       df_prev_subset <- data.frame()
     }
-    ##### decide how to process the variable out of 3 options
-    if (nrow(lookup_subset) == 1) {
-      ###### 1 - auto categorisation
+    ##### decide how to process the variable out of 3 options:
+
+    ###### 1 - auto categorisation via the lookup table
+    lookup_variable <- filter(lookup, Variable == this_variable)
+    if (nrow(lookup_variable) != 0) {
       output_df <- output_df %>% add_row(
         variable = this_variable,
         variable_n = this_variable_n,
-        domain_code = as.character(lookup_subset$domain_code),
+        domain_code = as.character(lookup_variable$Domain_Code),
         note = "AUTO CATEGORISED"
       )
     } else if (df_prev_exist == TRUE &&
@@ -152,7 +152,7 @@ user_categorisation_loop <- function(start_v, end_v, table_df, df_prev_exist,
         table_df$Column.name[data_v],
         table_df$Column.description[data_v],
         table_df$Data.type[data_v],
-        max(df_plots$code$code)
+        n_codes
       )
       output_df <- output_df %>% add_row(
         variable = this_variable,
